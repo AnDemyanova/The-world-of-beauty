@@ -98,6 +98,7 @@ const items = [{
 
 
 let currentState = [...items];
+let searchResults = [...items];
 
 
 const itemsContainer = document.querySelector("#shop-items");
@@ -129,6 +130,8 @@ function sortByPrice(a, b) {
 function sortByRating(a, b) {
     return a.rating - b.rating;
 }
+
+
 
 renderItems(currentState.sort(sortByAlphabet));
 
@@ -176,57 +179,53 @@ const searchButton = document.querySelector("#search-btn");
 function applySearch() {
 
     const searchString = searchInput.value.trim().toLowerCase();
-
-
-    currentState = items.filter((el) =>
-        el.title.toLowerCase().includes(searchString)
-    );
-
-    currentState.sort(sortByAlphabet);
-
+    if (searchString === "") {
+        searchResults = [...items];
+        currentState = [...items];
+    } else {
+        searchResults = items.filter((el) => el.title.toLowerCase().includes(searchString));
+        currentState = [...searchResults];
+    }
     renderItems(currentState);
-
     sortControl.selectedIndex = 0;
 }
-
-
 searchButton.addEventListener("click", applySearch);
 
-searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        applySearch();
-    }
-});
+searchInput.addEventListener("search", applySearch);
+
 
 
 const sortControl = document.querySelector("#sort");
 
 sortControl.addEventListener("change", (event) => {
-    let sortedItems;
-    if (!currentState.length) return;
 
     switch (event.target.value) {
         case "expensive":
-            sortedItems = [...currentState].sort((a, b) => sortByPrice(b, a));
+            sortedItems = currentState.sort((a, b) => sortByPrice(b, a));
             break;
 
         case "cheap":
-            sortedItems = [...currentState].sort(sortByPrice);
+            sortedItems = currentState.sort(sortByPrice);
             break;
 
         case "rating":
-            sortedItems = [...currentState].sort((a, b) => sortByRating(b, a));
+            sortedItems = currentState.sort((a, b) => sortByRating(b, a));
             break;
 
         case "alphabet":
-            sortedItems = [...currentState].sort(sortByAlphabet);
-            break;
-        default:
-            sortedItems = currentState;
+            sortedItems = currentState.sort(sortByAlphabet);
             break;
 
 
     }
 
     renderItems(currentState);
+
+    searchInput.addEventListener("input", () => {
+        if (searchInput.value === "") {
+            currentState = [...items];
+            renderItems(currentState);
+            sortControl.selectedIndex = 0;
+        }
+    })
 });

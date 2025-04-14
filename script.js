@@ -98,7 +98,7 @@ const items = [{
 
 
 let currentState = [...items];
-let searchResults = [...items];
+
 
 
 const itemsContainer = document.querySelector("#shop-items");
@@ -180,11 +180,10 @@ function applySearch() {
 
     const searchString = searchInput.value.trim().toLowerCase();
     if (searchString === "") {
-        searchResults = [...items];
+
         currentState = [...items];
     } else {
-        searchResults = items.filter((el) => el.title.toLowerCase().includes(searchString));
-        currentState = [...searchResults];
+        currentState = items.filter((el) => el.title.toLowerCase().includes(searchString));
     }
     renderItems(currentState);
     sortControl.selectedIndex = 0;
